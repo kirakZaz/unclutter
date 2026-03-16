@@ -1,0 +1,222 @@
+import React from 'react';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import {
+  Box,
+  Card,
+  CardContent,
+  TextField,
+  Button,
+  Typography,
+  Link,
+  Alert,
+  InputAdornment,
+  IconButton,
+  Grid,
+} from '@mui/material';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import RecyclingIcon from '@mui/icons-material/Recycling';
+import { useAuth } from '@/hooks/useAuth';
+import type { RegisterCredentials } from '@/types';
+
+function RegisterPage() {
+  const { register, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+
+  const [formValues, setFormValues] = React.useState<RegisterCredentials>({
+    name: '',
+    email: '',
+    password: '',
+    location: '',
+  });
+  const [confirmPassword, setConfirmPassword] = React.useState('');
+  const [isPasswordVisible, setIsPasswordVisible] = React.useState(false);
+  const [errorMessage, setErrorMessage] = React.useState('');
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
+
+  React.useEffect(() => {
+    if (isAuthenticated) navigate('/', { replace: true });
+  }, [isAuthenticated, navigate]);
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+    setFormValues((prev) => ({ ...prev, [name]: value }));
+    if (errorMessage) setErrorMessage('');
+  };
+
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (formValues.password !== confirmPassword) {
+      setErrorMessage('Passwords do not match.');
+      return;
+    }
+    if (formValues.password.length < 6) {
+      setErrorMessage('Password must be at least 6 characters.');
+      return;
+    }
+    setIsSubmitting(true);
+    setErrorMessage('');
+    try {
+      await register(formValues);
+      navigate('/');
+    } catch (error) {
+      setErrorMessage((error as Error).message);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const isFormValid =
+    formValues.name &&
+    formValues.email &&
+    formValues.password &&
+    confirmPassword &&
+    formValues.location;
+
+  return (
+    <Box
+      sx={{
+        minHeight: '100vh',
+        bgcolor: 'background.default',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        p: 2,
+        backgroundImage: `
+          radial-gradient(ellipse at 80% 80%, rgba(45, 106, 79, 0.08) 0%, transparent 60%),
+          radial-gradient(ellipse at 20% 20%, rgba(212, 137, 106, 0.08) 0%, transparent 60%)
+        `,
+      }}
+    >
+      <Box sx={{ width: '100%', maxWidth: 460 }}>
+        {/* Brand */}
+        <Box sx={{ textAlign: 'center', mb: 4 }}>
+          <Box
+            sx={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: 64,
+              height: 64,
+              borderRadius: '16px',
+              bgcolor: 'primary.main',
+              mb: 2,
+            }}
+          >
+            <RecyclingIcon sx={{ color: 'white', fontSize: 36 }} />
+          </Box>
+          <Typography variant="h3" gutterBottom>
+            Join Unclutter
+          </Typography>
+          <Typography color="text.secondary">
+            Start your decluttering journey today
+          </Typography>
+        </Box>
+
+        <Card>
+          <CardContent sx={{ p: 4 }}>
+            {errorMessage && (
+              <Alert severity="error" sx={{ mb: 3 }}>
+                {errorMessage}
+              </Alert>
+            )}
+
+            <Box
+              component="form"
+              onSubmit={handleSubmit}
+              noValidate
+              sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}
+            >
+              <Grid container spacing={2}>
+                <Grid item xs={12} sm={7}>
+                  <TextField
+                    label="Full name"
+                    name="name"
+                    value={formValues.name}
+                    onChange={handleInputChange}
+                    required
+                    fullWidth
+                    autoFocus
+                  />
+                </Grid>
+                <Grid item xs={12} sm={5}>
+                  <TextField
+                    label="City / Location"
+                    name="location"
+                    value={formValues.location}
+                    onChange={handleInputChange}
+                    required
+                    fullWidth
+                  />
+                </Grid>
+              </Grid>
+
+              <TextField
+                label="Email address"
+                name="email"
+                type="email"
+                value={formValues.email}
+                onChange={handleInputChange}
+                required
+                fullWidth
+                autoComplete="email"
+              />
+
+              <TextField
+                label="Password"
+                name="password"
+                type={isPasswordVisible ? 'text' : 'password'}
+                value={formValues.password}
+                onChange={handleInputChange}
+                required
+                fullWidth
+                helperText="Minimum 6 characters"
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={() => setIsPasswordVisible((prev) => !prev)}
+                        edge="end"
+                      >
+                        {isPasswordVisible ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+
+              <TextField
+                label="Confirm password"
+                type={isPasswordVisible ? 'text' : 'password'}
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                required
+                fullWidth
+              />
+
+              <Button
+                type="submit"
+                variant="contained"
+                fullWidth
+                size="large"
+                disabled={isSubmitting || !isFormValid}
+                sx={{ mt: 1 }}
+              >
+                {isSubmitting ? 'Creating account…' : 'Create account'}
+              </Button>
+            </Box>
+          </CardContent>
+        </Card>
+
+        <Typography textAlign="center" sx={{ mt: 3 }} color="text.secondary">
+          Already have an account?{' '}
+          <Link component={RouterLink} to="/login" fontWeight={600}>
+            Sign in
+          </Link>
+        </Typography>
+      </Box>
+    </Box>
+  );
+}
+
+export default RegisterPage;

@@ -1,0 +1,207 @@
+{
+  "users": [
+    {
+      "id": "seed-user-1",
+      "email": "alice@example.com",
+      "passwordHash": "demo123",
+      "name": "Alice Green",
+      "avatar": "",
+      "bio": "Minimalist lifestyle enthusiast",
+      "location": "Melbourne",
+      "joinedAt": "2024-01-15T10:00:00.000Z",
+      "stats": { "itemsGiven": 12, "itemsReceived": 5, "co2Saved": 24.5 }
+    },
+    {
+      "id": "seed-user-2",
+      "email": "bob@example.com",
+      "passwordHash": "demo123",
+      "name": "Bob River",
+      "avatar": "",
+      "bio": "Swap party organiser",
+      "location": "Melbourne",
+      "joinedAt": "2024-02-20T09:00:00.000Z",
+      "stats": { "itemsGiven": 7, "itemsReceived": 3, "co2Saved": 14.0 }
+    },{
+      "id": "f2835fd3-db87-4366-b778-81194f1ad0b2",
+      "email": "kirka.zaz@gmail.com",
+      "passwordHash": "kirka.zaz",
+      "name": "Kira Za",
+      "avatar": "",
+      "bio": "",
+      "location": "Melbourne",
+      "joinedAt": "2026-03-06T00:33:46.983Z",
+      "stats": { "itemsGiven": 8, "itemsReceived": 7, "co2Saved": 33.0 }
+    }
+  ],
+  "exchangeItems": [
+    {
+      "id": "item-1",
+      "authorId": "seed-user-1",
+      "authorName": "Alice Green",
+      "title": "Vintage leather bag",
+      "description": "Used twice, great condition. Looking to swap or give away.",
+      "category": "fashion",
+      "type": "swap",
+      "images": [],
+      "location": "Melbourne",
+      "createdAt": "2024-11-01T12:00:00.000Z",
+      "status": "available",
+      "likes": 8
+    },
+    {
+      "id": "item-2",
+      "authorId": "seed-user-2",
+      "authorName": "Bob River",
+      "title": "Stack of design books",
+      "description": "5 books on UX/UI design. Free to a good home.",
+      "category": "books",
+      "type": "free",
+      "images": [],
+      "location": "Melbourne",
+      "createdAt": "2024-11-05T09:00:00.000Z",
+      "status": "available",
+      "likes": 15
+    },
+    {
+      "id": "item-3",
+      "authorId": "seed-user-1",
+      "authorName": "Alice Green",
+      "title": "Bamboo kitchen utensils set",
+      "description": "Complete set, barely used. Great for eco-conscious cooks.",
+      "category": "kitchen",
+      "type": "swap",
+      "images": [],
+      "location": "Melbourne",
+      "createdAt": "2024-11-10T14:00:00.000Z",
+      "status": "available",
+      "likes": 6
+    }
+  ],
+  "communities": [
+    {
+      "id": "com-1",
+      "name": "Zero Waste Melbourne",
+      "description": "Local community for zero waste living and swap events in Melbourne.",
+      "category": "local",
+      "members": 342,
+      "location": "Melbourne",
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "isPublic": true
+    },
+    {
+      "id": "com-2",
+      "name": "Repair Café Network",
+      "description": "Share repair skills and fix items together instead of throwing them away.",
+      "category": "repair",
+      "members": 210,
+      "location": "Melbourne",
+      "createdAt": "2024-02-01T00:00:00.000Z",
+      "isPublic": true
+    },
+    {
+      "id": "com-3",
+      "name": "Minimalists Together",
+      "description": "A supportive space for people on their decluttering journey.",
+      "category": "lifestyle",
+      "members": 589,
+      "location": "Melbourne",
+      "createdAt": "2024-03-01T00:00:00.000Z",
+      "isPublic": true
+    }
+  ],
+  "challenges": [
+    {
+      "id": "chal-1",
+      "title": "30-Day Declutter Challenge",
+      "description": "Remove one item per day for 30 days. Post your progress and inspire others!",
+      "category": "declutter",
+      "duration": 30,
+      "participants": 1240,
+      "startDate": "2026-03-01T00:00:00.000Z",
+      "endDate": "2026-03-31T00:00:00.000Z",
+      "badge": "🏆",
+      "difficulty": "easy",
+      "isActive": true
+    },
+    {
+      "id": "chal-2",
+      "title": "No-Buy November",
+      "description": "Commit to not buying anything non-essential for a month and share alternatives you found.",
+      "category": "consumption",
+      "duration": 30,
+      "participants": 870,
+      "startDate": "2025-11-01T00:00:00.000Z",
+      "endDate": "2025-11-30T00:00:00.000Z",
+      "badge": "🌱",
+      "difficulty": "medium",
+      "isActive": false
+    },
+    {
+      "id": "chal-3",
+      "title": "Capsule Wardrobe Sprint",
+      "description": "Cut your wardrobe to 33 items. Document the journey and what you learned.",
+      "category": "fashion",
+      "duration": 14,
+      "participants": 445,
+      "startDate": "2026-03-01T00:00:00.000Z",
+      "endDate": "2026-03-31T00:00:00.000Z",
+      "badge": "👗",
+      "difficulty": "hard",
+      "isActive": true
+    }
+  ],
+  "donations": [
+    {
+      "id": "don-1",
+      "authorId": "seed-user-1",
+      "authorName": "Alice Green",
+      "title": "Children's books bundle",
+      "description": "20+ children's books for ages 3-8. Perfect for schools or families in need.",
+      "category": "books",
+      "quantity": 20,
+      "location": "Melbourne",
+      "organization": "Local library",
+      "createdAt": "2024-11-12T10:00:00.000Z",
+      "status": "available",
+      "urgency": "low"
+    },
+    {
+      "id": "don-2",
+      "authorId": "seed-user-2",
+      "authorName": "Bob River",
+      "title": "Winter coats (adults)",
+      "description": "3 winter coats in good condition, sizes M and L. Ideal for charity.",
+      "category": "clothing",
+      "quantity": 3,
+      "location": "Melbourne",
+      "organization": "Refugee support centre",
+      "createdAt": "2024-11-18T08:00:00.000Z",
+      "status": "available",
+      "urgency": "high"
+    }
+  ],
+  "supportPosts": [
+    {
+      "id": "post-1",
+      "authorId": "seed-user-1",
+      "authorName": "Alice Green",
+      "title": "Struggling to let go of sentimental items",
+      "content": "I've been trying to declutter for months but keep getting stuck on things with memories attached. Any advice?",
+      "tags": ["emotional", "sentimental", "advice"],
+      "replies": 7,
+      "likes": 23,
+      "createdAt": "2024-11-08T14:00:00.000Z"
+    },
+    {
+      "id": "post-2",
+      "authorId": "seed-user-2",
+      "authorName": "Bob River",
+      "title": "How do I convince my partner to join the journey?",
+      "content": "I want to live more minimally but my partner loves keeping everything. How do you navigate this as a couple?",
+      "tags": ["relationship", "minimalism", "tips"],
+      "replies": 12,
+      "likes": 45,
+      "createdAt": "2024-11-15T11:00:00.000Z"
+    }
+  ]
+}
