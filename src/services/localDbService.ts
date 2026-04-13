@@ -6,6 +6,7 @@ import type {
   PublicUser,
   ExchangeItem,
   Community,
+  CommunityPost,
   Challenge,
   Donation,
   SupportPost,
@@ -132,6 +133,38 @@ export function joinCommunity(communityId: string): Promise<void> {
   const community = db.communities.find((c) => c.id === communityId);
   if (community) {
     community.members += 1;
+    saveDatabase(db);
+  }
+  return Promise.resolve();
+}
+
+// ─── Community Posts ──────────────────────────────────────────────────────────
+
+export function getCommunityPosts(communityId?: string): CommunityPost[] {
+  const posts = loadDatabase().communityPosts ?? [];
+  if (communityId) return posts.filter((p) => p.communityId === communityId);
+  return posts;
+}
+
+export function addCommunityPost(post: Omit<CommunityPost, 'id' | 'createdAt' | 'likes'>): Promise<CommunityPost> {
+  const db = loadDatabase();
+  const newPost: CommunityPost = {
+    ...post,
+    id: uuidv4(),
+    createdAt: new Date().toISOString(),
+    likes: 0,
+  };
+  if (!db.communityPosts) db.communityPosts = [];
+  db.communityPosts.unshift(newPost);
+  saveDatabase(db);
+  return Promise.resolve(newPost);
+}
+
+export function likeCommunityPost(postId: string): Promise<void> {
+  const db = loadDatabase();
+  const post = (db.communityPosts ?? []).find((p) => p.id === postId);
+  if (post) {
+    post.likes += 1;
     saveDatabase(db);
   }
   return Promise.resolve();

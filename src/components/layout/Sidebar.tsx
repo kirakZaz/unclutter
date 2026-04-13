@@ -29,9 +29,9 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { label: 'Home', path: '/', icon: <HomeIcon /> },
+  { label: 'Communities', path: '/communities', icon: <PeopleIcon />, badge: 'Hot' },
   { label: 'Exchange', path: '/exchange', icon: <SwapHorizIcon /> },
-  { label: 'Communities', path: '/communities', icon: <PeopleIcon /> },
-  { label: 'Challenges', path: '/challenges', icon: <EmojiEventsIcon />, badge: 'New' },
+  { label: 'Challenges', path: '/challenges', icon: <EmojiEventsIcon /> },
   { label: 'Donations', path: '/donations', icon: <VolunteerActivismIcon /> },
   { label: 'Support', path: '/support', icon: <FavoriteIcon /> },
 ];
@@ -150,18 +150,18 @@ function SidebarContent({ width }: { width: number }) {
           sx={{
             p: 2,
             borderRadius: 3,
-            bgcolor: 'rgba(45, 106, 79, 0.06)',
-            border: '1px solid rgba(45, 106, 79, 0.1)',
+            background: 'linear-gradient(135deg, rgba(45,106,79,0.08) 0%, rgba(82,183,136,0.08) 100%)',
+            border: '1px solid rgba(45, 106, 79, 0.15)',
           }}
         >
           <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>
-            🌍 Platform Impact
+            🤝 Community impact
           </Typography>
-          <Typography variant="body2" fontWeight={600} color="primary.main">
-            2,847 items circulated
+          <Typography variant="body2" fontWeight={700} color="primary.main">
+            3,241 members active
           </Typography>
           <Typography variant="caption" color="text.secondary">
-            5.2 tonnes CO₂ saved
+            across 8 communities
           </Typography>
         </Box>
       </Box>

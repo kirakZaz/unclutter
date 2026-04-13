@@ -1,13 +1,13 @@
 import { Box, Card, CardContent, Typography, Button, Grid, Chip, Avatar } from '@mui/material';
 import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
-import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import VolunteerActivismIcon from '@mui/icons-material/VolunteerActivism';
 import Co2Icon from '@mui/icons-material/Co2';
+import FavoriteIcon from '@mui/icons-material/Favorite';
 import { Link as RouterLink } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '@/hooks/useAuth';
 import StatCard from '@/components/common/StatCard';
-import { getChallenges, getExchangeItems } from '@/services/localDbService';
+import { getChallenges, getCommunityPosts } from '@/services/localDbService';
 
 function HomePage() {
   const { currentUser } = useAuth();
@@ -17,13 +17,13 @@ function HomePage() {
     queryFn: getChallenges,
   });
 
-  const { data: exchangeItems = [] } = useQuery({
-    queryKey: ['exchangeItems'],
-    queryFn: getExchangeItems,
+  const { data: communityPosts = [] } = useQuery({
+    queryKey: ['communityPosts'],
+    queryFn: () => getCommunityPosts(),
   });
 
   const activeChallenges = challenges.filter((challenge) => challenge.isActive);
-  const recentItems = exchangeItems.slice(0, 3);
+  const recentPosts = communityPosts.slice(0, 3);
 
   return (
     <Box>
@@ -53,25 +53,25 @@ function HomePage() {
           Hello, {currentUser?.name?.split(' ')[0]} 👋
         </Typography>
         <Typography sx={{ opacity: 0.85, mb: 3, maxWidth: 480 }}>
-          Every item you share or donate reduces waste and connects your community. Keep the
-          circular loop going.
+          You're part of something bigger. Connect with people in your area, share what you no
+          longer need, and make a real difference together.
         </Typography>
         <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
           <Button
             component={RouterLink}
-            to="/exchange"
+            to="/communities"
             variant="contained"
             sx={{ bgcolor: 'white', color: 'primary.main', '&:hover': { bgcolor: 'grey.100' } }}
           >
-            Post an item
+            Find your community
           </Button>
           <Button
             component={RouterLink}
-            to="/challenges"
+            to="/exchange"
             variant="outlined"
             sx={{ borderColor: 'rgba(255,255,255,0.5)', color: 'white', '&:hover': { borderColor: 'white' } }}
           >
-            Join a challenge
+            Post an item
           </Button>
         </Box>
       </Box>
@@ -162,59 +162,74 @@ function HomePage() {
           </Card>
         </Grid>
 
-        {/* Recent exchange items */}
+        {/* Community activity feed */}
         <Grid item xs={12} md={6}>
           <Card sx={{ height: '100%' }}>
             <CardContent sx={{ p: 3 }}>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                <Typography variant="h6">Recent in exchange</Typography>
-                <Button component={RouterLink} to="/exchange" size="small">
-                  Browse all
+                <Typography variant="h6">Community activity</Typography>
+                <Button component={RouterLink} to="/communities" size="small">
+                  All communities
                 </Button>
               </Box>
-              {recentItems.map((item) => (
-                <Box
-                  key={item.id}
-                  sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 2,
-                    p: 1.5,
-                    borderRadius: 2,
-                    mb: 1,
-                    '&:hover': { bgcolor: 'rgba(45,106,79,0.04)' },
-                  }}
-                >
+              {recentPosts.length === 0 ? (
+                <Typography color="text.secondary">No recent activity.</Typography>
+              ) : (
+                recentPosts.map((post) => (
                   <Box
+                    key={post.id}
                     sx={{
-                      width: 44,
-                      height: 44,
+                      p: 1.5,
                       borderRadius: 2,
-                      bgcolor: 'rgba(212, 137, 106, 0.12)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      flexShrink: 0,
+                      mb: 1,
+                      border: '1px solid',
+                      borderColor: 'divider',
+                      '&:hover': { bgcolor: 'rgba(45,106,79,0.04)' },
                     }}
                   >
-                    <EmojiEventsIcon sx={{ color: 'secondary.main', fontSize: 22 }} />
-                  </Box>
-                  <Box sx={{ flexGrow: 1, minWidth: 0 }}>
-                    <Typography variant="body2" fontWeight={600} noWrap>
-                      {item.title}
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+                      <Avatar
+                        sx={{
+                          width: 28,
+                          height: 28,
+                          fontSize: '0.7rem',
+                          bgcolor: 'primary.main',
+                        }}
+                      >
+                        {post.authorName.charAt(0)}
+                      </Avatar>
+                      <Typography variant="caption" fontWeight={600}>
+                        {post.authorName}
+                      </Typography>
+                      <Chip
+                        label={post.communityName}
+                        size="small"
+                        sx={{ fontSize: '0.6rem', height: 18, bgcolor: 'rgba(45,106,79,0.08)', color: 'primary.main' }}
+                      />
+                    </Box>
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      sx={{
+                        display: '-webkit-box',
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: 'vertical',
+                        overflow: 'hidden',
+                        lineHeight: 1.5,
+                        mb: 0.5,
+                      }}
+                    >
+                      {post.content}
                     </Typography>
-                    <Typography variant="caption" color="text.secondary">
-                      {item.location} · {item.authorName}
-                    </Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                      <FavoriteIcon sx={{ fontSize: 12, color: 'text.disabled' }} />
+                      <Typography variant="caption" color="text.disabled">
+                        {post.likes}
+                      </Typography>
+                    </Box>
                   </Box>
-                  <Chip
-                    label={item.type}
-                    size="small"
-                    color={item.type === 'free' ? 'success' : 'default'}
-                    variant="outlined"
-                  />
-                </Box>
-              ))}
+                ))
+              )}
             </CardContent>
           </Card>
         </Grid>

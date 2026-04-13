@@ -72,6 +72,18 @@ export interface Community {
   location: string;
   createdAt: string;
   isPublic: boolean;
+  recentActivity?: string;
+}
+
+export interface CommunityPost {
+  id: string;
+  communityId: string;
+  communityName: string;
+  authorId: string;
+  authorName: string;
+  content: string;
+  likes: number;
+  createdAt: string;
 }
 
 // ─── Challenges ───────────────────────────────────────────────────────────────
@@ -133,6 +145,7 @@ export interface LocalDatabase {
   users: User[];
   exchangeItems: ExchangeItem[];
   communities: Community[];
+  communityPosts: CommunityPost[];
   challenges: Challenge[];
   donations: Donation[];
   supportPosts: SupportPost[];

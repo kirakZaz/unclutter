@@ -81,32 +81,142 @@
     {
       "id": "com-1",
       "name": "Zero Waste Melbourne",
-      "description": "Local community for zero waste living and swap events in Melbourne.",
+      "description": "Local community for zero waste living and swap events in Melbourne. We meet monthly to swap goods and share tips for reducing household waste.",
       "category": "local",
       "members": 342,
       "location": "Melbourne",
       "createdAt": "2024-01-01T00:00:00.000Z",
-      "isPublic": true
+      "isPublic": true,
+      "recentActivity": "Swap event this Saturday at Fitzroy"
     },
     {
       "id": "com-2",
       "name": "Repair Café Network",
-      "description": "Share repair skills and fix items together instead of throwing them away.",
+      "description": "Share repair skills and fix items together instead of throwing them away. Welcoming people of all skill levels — if you can sew, solder, or just help out, join us.",
       "category": "repair",
       "members": 210,
       "location": "Melbourne",
       "createdAt": "2024-02-01T00:00:00.000Z",
-      "isPublic": true
+      "isPublic": true,
+      "recentActivity": "New workshop: fixing small electronics"
     },
     {
       "id": "com-3",
       "name": "Minimalists Together",
-      "description": "A supportive space for people on their decluttering journey.",
+      "description": "A supportive space for people on their decluttering journey. Share your wins, ask for advice, and find motivation from a community that gets it.",
       "category": "lifestyle",
       "members": 589,
       "location": "Melbourne",
       "createdAt": "2024-03-01T00:00:00.000Z",
-      "isPublic": true
+      "isPublic": true,
+      "recentActivity": "30-day challenge update thread is live"
+    },
+    {
+      "id": "com-4",
+      "name": "Slow Fashion Collective",
+      "description": "For those who love style but refuse fast fashion. Swap clothes, share styling tips, and celebrate ethical brands and second-hand finds.",
+      "category": "fashion",
+      "members": 418,
+      "location": "Melbourne",
+      "createdAt": "2024-04-01T00:00:00.000Z",
+      "isPublic": true,
+      "recentActivity": "Clothing swap happening next weekend"
+    },
+    {
+      "id": "com-5",
+      "name": "Backyard Growers",
+      "description": "Growing your own food, composting, and sharing the harvest. Connect with urban gardeners and learn how to reduce food waste at home.",
+      "category": "food",
+      "members": 276,
+      "location": "Melbourne",
+      "createdAt": "2024-05-01T00:00:00.000Z",
+      "isPublic": true,
+      "recentActivity": "Seed library is now open for swaps"
+    },
+    {
+      "id": "com-6",
+      "name": "Second Life Electronics",
+      "description": "Giving electronics a second life through repair, upcycling, and responsible recycling. Reduce e-waste and share knowledge about tech longevity.",
+      "category": "repair",
+      "members": 183,
+      "location": "Melbourne",
+      "createdAt": "2024-06-01T00:00:00.000Z",
+      "isPublic": true,
+      "recentActivity": "Free repair session this Thursday"
+    },
+    {
+      "id": "com-7",
+      "name": "Neighbourhood Exchange",
+      "description": "Hyperlocal community for sharing tools, borrowing items, and connecting with neighbours who believe in sharing over owning.",
+      "category": "local",
+      "members": 491,
+      "location": "Melbourne",
+      "createdAt": "2024-07-01T00:00:00.000Z",
+      "isPublic": true,
+      "recentActivity": "Tool library now has 80+ items"
+    },
+    {
+      "id": "com-8",
+      "name": "Conscious Consumers",
+      "description": "A general community for anyone working toward more intentional consumption. Discuss sustainable habits, share resources, and support each other.",
+      "category": "general",
+      "members": 734,
+      "location": "Melbourne",
+      "createdAt": "2024-08-01T00:00:00.000Z",
+      "isPublic": true,
+      "recentActivity": "Weekly accountability thread is up"
+    }
+  ],
+  "communityPosts": [
+    {
+      "id": "cp-1",
+      "communityId": "com-1",
+      "communityName": "Zero Waste Melbourne",
+      "authorId": "seed-user-1",
+      "authorName": "Alice Green",
+      "content": "Just finished our monthly swap — 87 items found new homes! Thanks to everyone who came out.",
+      "likes": 34,
+      "createdAt": "2026-04-11T09:00:00.000Z"
+    },
+    {
+      "id": "cp-2",
+      "communityId": "com-3",
+      "communityName": "Minimalists Together",
+      "authorId": "seed-user-2",
+      "authorName": "Bob River",
+      "content": "Week 2 of the 30-day challenge done! Already cleared out 14 items. Who else is participating?",
+      "likes": 21,
+      "createdAt": "2026-04-12T14:00:00.000Z"
+    },
+    {
+      "id": "cp-3",
+      "communityId": "com-7",
+      "communityName": "Neighbourhood Exchange",
+      "authorId": "seed-user-1",
+      "authorName": "Alice Green",
+      "content": "Added a power drill and pressure washer to the tool library. Available for anyone in the group to borrow!",
+      "likes": 18,
+      "createdAt": "2026-04-12T16:30:00.000Z"
+    },
+    {
+      "id": "cp-4",
+      "communityId": "com-4",
+      "communityName": "Slow Fashion Collective",
+      "authorId": "seed-user-2",
+      "authorName": "Bob River",
+      "content": "Found the most amazing linen jacket at the op shop today for $4. This is why we thrift!",
+      "likes": 45,
+      "createdAt": "2026-04-13T08:15:00.000Z"
+    },
+    {
+      "id": "cp-5",
+      "communityId": "com-5",
+      "communityName": "Backyard Growers",
+      "authorId": "seed-user-1",
+      "authorName": "Alice Green",
+      "content": "Tomato seedlings are ready to share — I have about 20 extras. DM me if you want some!",
+      "likes": 29,
+      "createdAt": "2026-04-13T10:00:00.000Z"
     }
   ],
   "challenges": [
