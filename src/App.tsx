@@ -9,9 +9,8 @@ import RegisterPage from './pages/auth/RegisterPage';
 import HomePage from './pages/HomePage';
 import ExchangePage from './pages/exchange/ExchangePage';
 import CommunitiesPage from './pages/communities/CommunitiesPage';
-import ChallengesPage from './pages/challenges/ChallengesPage';
-import DonationsPage from './pages/donations/DonationsPage';
-import SupportPage from './pages/support/SupportPage';
+import EventsPage from './pages/events/EventsPage';
+import HubMapPage from './pages/hubs/HubMapPage';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
@@ -56,11 +55,10 @@ function App() {
         }
       >
         <Route index element={<HomePage />} />
-        <Route path="exchange" element={<ExchangePage />} />
+        <Route path="give-receive" element={<ExchangePage />} />
         <Route path="communities" element={<CommunitiesPage />} />
-        <Route path="challenges" element={<ChallengesPage />} />
-        <Route path="donations" element={<DonationsPage />} />
-        <Route path="support" element={<SupportPage />} />
+        <Route path="events" element={<EventsPage />} />
+        <Route path="hubs" element={<HubMapPage />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

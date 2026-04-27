@@ -38,9 +38,9 @@ export interface RegisterCredentials {
   location: string;
 }
 
-// ─── Exchange ─────────────────────────────────────────────────────────────────
+// ─── Give & Receive (Exchange) ───────────────────────────────────────────────
 
-export type ExchangeType = 'swap' | 'free' | 'sell';
+export type ExchangeType = 'free' | 'swap';
 export type ItemStatus = 'available' | 'reserved' | 'completed';
 export type ItemCategory = 'fashion' | 'books' | 'kitchen' | 'electronics' | 'furniture' | 'toys' | 'sports' | 'other';
 
@@ -86,57 +86,51 @@ export interface CommunityPost {
   createdAt: string;
 }
 
-// ─── Challenges ───────────────────────────────────────────────────────────────
+// ─── Events ──────────────────────────────────────────────────────────────────
 
-export type ChallengeDifficulty = 'easy' | 'medium' | 'hard';
-export type ChallengeCategory = 'declutter' | 'consumption' | 'fashion' | 'food' | 'digital';
+export type EventCategory = 'swap-meet' | 'repair-cafe' | 'skill-share' | 'workshop' | 'social';
 
-export interface Challenge {
+export interface CommunityEvent {
   id: string;
   title: string;
   description: string;
-  category: ChallengeCategory;
-  duration: number;
-  participants: number;
-  startDate: string;
-  endDate: string;
-  badge: string;
-  difficulty: ChallengeDifficulty;
+  category: EventCategory;
+  date: string;
+  time: string;
+  location: string;
+  address: string;
+  organizer: string;
+  attendees: number;
+  maxCapacity: number;
+  isFree: boolean;
+  communityId?: string;
+  communityName?: string;
+}
+
+// ─── Hub Locations ───────────────────────────────────────────────────────────
+
+export type HubType = 'drop-off' | 'charity-partner' | 'repair-cafe' | 'circular-van';
+
+export interface HubLocation {
+  id: string;
+  name: string;
+  type: HubType;
+  description: string;
+  address: string;
+  suburb: string;
+  hours: string;
+  acceptedItems: string[];
   isActive: boolean;
 }
 
-// ─── Donations ────────────────────────────────────────────────────────────────
+// ─── Community Impact ────────────────────────────────────────────────────────
 
-export type DonationUrgency = 'low' | 'medium' | 'high';
-export type DonationStatus = 'available' | 'claimed' | 'completed';
-
-export interface Donation {
-  id: string;
-  authorId: string;
-  authorName: string;
-  title: string;
-  description: string;
-  category: string;
-  quantity: number;
-  location: string;
-  organization: string;
-  createdAt: string;
-  status: DonationStatus;
-  urgency: DonationUrgency;
-}
-
-// ─── Support ──────────────────────────────────────────────────────────────────
-
-export interface SupportPost {
-  id: string;
-  authorId: string;
-  authorName: string;
-  title: string;
-  content: string;
-  tags: string[];
-  replies: number;
-  likes: number;
-  createdAt: string;
+export interface CommunityImpact {
+  totalItemsCirculated: number;
+  totalMembers: number;
+  totalCo2Saved: number;
+  totalEvents: number;
+  activeHubs: number;
 }
 
 // ─── Database ─────────────────────────────────────────────────────────────────
@@ -146,7 +140,6 @@ export interface LocalDatabase {
   exchangeItems: ExchangeItem[];
   communities: Community[];
   communityPosts: CommunityPost[];
-  challenges: Challenge[];
-  donations: Donation[];
-  supportPosts: SupportPost[];
+  events: CommunityEvent[];
+  hubLocations: HubLocation[];
 }

@@ -13,12 +13,11 @@ import {
   Chip,
 } from '@mui/material';
 import RecyclingIcon from '@mui/icons-material/Recycling';
-import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
-import PeopleIcon from '@mui/icons-material/People';
-import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
-import VolunteerActivismIcon from '@mui/icons-material/VolunteerActivism';
-import FavoriteIcon from '@mui/icons-material/Favorite';
 import HomeIcon from '@mui/icons-material/Home';
+import VolunteerActivismIcon from '@mui/icons-material/VolunteerActivism';
+import PeopleIcon from '@mui/icons-material/People';
+import EventIcon from '@mui/icons-material/Event';
+import MapIcon from '@mui/icons-material/Map';
 
 interface NavItem {
   label: string;
@@ -29,11 +28,10 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { label: 'Home', path: '/', icon: <HomeIcon /> },
+  { label: 'Give & Receive', path: '/give-receive', icon: <VolunteerActivismIcon /> },
   { label: 'Communities', path: '/communities', icon: <PeopleIcon />, badge: 'Hot' },
-  { label: 'Exchange', path: '/exchange', icon: <SwapHorizIcon /> },
-  { label: 'Challenges', path: '/challenges', icon: <EmojiEventsIcon /> },
-  { label: 'Donations', path: '/donations', icon: <VolunteerActivismIcon /> },
-  { label: 'Support', path: '/support', icon: <FavoriteIcon /> },
+  { label: 'Events', path: '/events', icon: <EventIcon /> },
+  { label: 'Hub Map', path: '/hubs', icon: <MapIcon /> },
 ];
 
 interface SidebarProps {
@@ -86,7 +84,7 @@ function SidebarContent({ width }: { width: number }) {
             Unclutter
           </Typography>
           <Typography variant="caption" color="text.secondary" sx={{ lineHeight: 1 }}>
-            Circulate & Simplify
+            Share. Connect. Belong.
           </Typography>
         </Box>
       </Box>
@@ -155,13 +153,10 @@ function SidebarContent({ width }: { width: number }) {
           }}
         >
           <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>
-            🤝 Community impact
+            Inner North Melbourne
           </Typography>
-          <Typography variant="body2" fontWeight={700} color="primary.main">
-            3,241 members active
-          </Typography>
-          <Typography variant="caption" color="text.secondary">
-            across 8 communities
+          <Typography variant="body2" fontWeight={600} color="primary.main" sx={{ lineHeight: 1.4 }}>
+            "The act of sharing is an act of community-building."
           </Typography>
         </Box>
       </Box>

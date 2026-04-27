@@ -5,9 +5,8 @@ import {
   logoutUser,
   getExchangeItems,
   getCommunities,
-  getChallenges,
-  getDonations,
-  getSupportPosts,
+  getEvents,
+  getHubLocations,
 } from '@/services/localDbService';
 
 // Mock uuid so IDs are predictable in tests
@@ -24,7 +23,7 @@ vi.mock('../../db.json', () => ({
         name: 'Alice Green',
         avatar: '',
         bio: 'Test bio',
-        location: 'Berlin',
+        location: 'Fitzroy',
         joinedAt: '2024-01-01T00:00:00.000Z',
         stats: { itemsGiven: 12, itemsReceived: 5, co2Saved: 24.5 },
       },
@@ -33,32 +32,45 @@ vi.mock('../../db.json', () => ({
     communities: [
       {
         id: 'com-1',
-        name: 'Zero Waste Berlin',
+        name: 'Zero Waste Fitzroy',
         description: 'Test community',
         category: 'local',
         members: 100,
-        location: 'Berlin',
+        location: 'Fitzroy',
         createdAt: '2024-01-01T00:00:00.000Z',
         isPublic: true,
       },
     ],
-    challenges: [
+    communityPosts: [],
+    events: [
       {
-        id: 'chal-1',
-        title: '30-Day Declutter',
-        description: 'Test challenge',
-        category: 'declutter',
-        duration: 30,
-        participants: 500,
-        startDate: '2024-12-01T00:00:00.000Z',
-        endDate: '2024-12-31T00:00:00.000Z',
-        badge: '🏆',
-        difficulty: 'easy',
+        id: 'evt-1',
+        title: 'Fitzroy Swap Meet',
+        description: 'Test event',
+        category: 'swap-meet',
+        date: '2026-05-01',
+        time: '10:00 AM',
+        location: 'Fitzroy Town Hall',
+        address: '201 Napier St',
+        organizer: 'Zero Waste Fitzroy',
+        attendees: 10,
+        maxCapacity: 50,
+        isFree: true,
+      },
+    ],
+    hubLocations: [
+      {
+        id: 'hub-1',
+        name: 'Fitzroy Drop-off',
+        type: 'drop-off',
+        description: 'Test hub',
+        address: '201 Napier St',
+        suburb: 'Fitzroy',
+        hours: 'Mon-Sat 9-5',
+        acceptedItems: ['clothing', 'books'],
         isActive: true,
       },
     ],
-    donations: [],
-    supportPosts: [],
   },
 }));
 
@@ -100,7 +112,7 @@ describe('localDbService', () => {
         name: 'New User',
         email: 'new@example.com',
         password: 'secret123',
-        location: 'Paris',
+        location: 'Brunswick',
       });
 
       expect(newUser.name).toBe('New User');
@@ -114,7 +126,7 @@ describe('localDbService', () => {
           name: 'Duplicate',
           email: 'alice@example.com',
           password: 'password',
-          location: 'Berlin',
+          location: 'Fitzroy',
         })
       ).toThrow('An account with this email already exists.');
     });
@@ -124,7 +136,7 @@ describe('localDbService', () => {
         name: 'Persistent User',
         email: 'persist@example.com',
         password: 'pass456',
-        location: 'London',
+        location: 'Collingwood',
       });
 
       const loggedIn = loginUser({ email: 'persist@example.com', password: 'pass456' });
@@ -151,23 +163,19 @@ describe('localDbService', () => {
     it('getCommunities should return seeded communities', () => {
       const communities = getCommunities();
       expect(communities.length).toBeGreaterThan(0);
-      expect(communities[0].name).toBe('Zero Waste Berlin');
+      expect(communities[0].name).toBe('Zero Waste Fitzroy');
     });
 
-    it('getChallenges should return seeded challenges', () => {
-      const challenges = getChallenges();
-      expect(challenges.length).toBeGreaterThan(0);
-      expect(challenges[0].isActive).toBe(true);
+    it('getEvents should return seeded events', () => {
+      const events = getEvents();
+      expect(events.length).toBeGreaterThan(0);
+      expect(events[0].title).toBe('Fitzroy Swap Meet');
     });
 
-    it('getDonations should return an array', () => {
-      const donations = getDonations();
-      expect(Array.isArray(donations)).toBe(true);
-    });
-
-    it('getSupportPosts should return an array', () => {
-      const posts = getSupportPosts();
-      expect(Array.isArray(posts)).toBe(true);
+    it('getHubLocations should return active hubs', () => {
+      const hubs = getHubLocations();
+      expect(hubs.length).toBeGreaterThan(0);
+      expect(hubs[0].name).toBe('Fitzroy Drop-off');
     });
   });
 });

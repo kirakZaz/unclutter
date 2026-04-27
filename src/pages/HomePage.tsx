@@ -1,20 +1,22 @@
-import { Box, Card, CardContent, Typography, Button, Grid, Chip, Avatar } from '@mui/material';
-import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
+import { Box, Card, CardContent, Typography, Button, Grid, Chip, Avatar, Divider } from '@mui/material';
 import VolunteerActivismIcon from '@mui/icons-material/VolunteerActivism';
+import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
 import Co2Icon from '@mui/icons-material/Co2';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
 import FavoriteIcon from '@mui/icons-material/Favorite';
+import FormatQuoteIcon from '@mui/icons-material/FormatQuote';
 import { Link as RouterLink } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '@/hooks/useAuth';
 import StatCard from '@/components/common/StatCard';
-import { getChallenges, getCommunityPosts } from '@/services/localDbService';
+import { getEvents, getCommunityPosts, getCommunityImpact } from '@/services/localDbService';
 
 function HomePage() {
   const { currentUser } = useAuth();
 
-  const { data: challenges = [] } = useQuery({
-    queryKey: ['challenges'],
-    queryFn: getChallenges,
+  const { data: events = [] } = useQuery({
+    queryKey: ['events'],
+    queryFn: getEvents,
   });
 
   const { data: communityPosts = [] } = useQuery({
@@ -22,75 +24,181 @@ function HomePage() {
     queryFn: () => getCommunityPosts(),
   });
 
-  const activeChallenges = challenges.filter((challenge) => challenge.isActive);
-  const recentPosts = communityPosts.slice(0, 3);
+  const { data: impact } = useQuery({
+    queryKey: ['communityImpact'],
+    queryFn: getCommunityImpact,
+  });
+
+  const upcomingEvents = events
+    .filter((e) => new Date(e.date) >= new Date(new Date().toDateString()))
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+    .slice(0, 3);
+
+  const recentPosts = communityPosts.slice(0, 4);
 
   return (
     <Box>
-      {/* Welcome banner */}
+      {/* Hero banner — community-first */}
       <Box
         sx={{
-          p: { xs: 3, md: 4 },
+          p: { xs: 3, md: 5 },
           borderRadius: 4,
           mb: 4,
-          background: 'linear-gradient(135deg, #2D6A4F 0%, #52B788 100%)',
+          background: 'linear-gradient(135deg, #1B4332 0%, #2D6A4F 40%, #52B788 100%)',
           color: 'white',
           position: 'relative',
           overflow: 'hidden',
           '&::after': {
             content: '""',
             position: 'absolute',
-            right: -40,
-            top: -40,
+            right: -60,
+            top: -60,
+            width: 280,
+            height: 280,
+            borderRadius: '50%',
+            bgcolor: 'rgba(255,255,255,0.05)',
+          },
+          '&::before': {
+            content: '""',
+            position: 'absolute',
+            left: -40,
+            bottom: -40,
             width: 200,
             height: 200,
             borderRadius: '50%',
-            bgcolor: 'rgba(255,255,255,0.07)',
+            bgcolor: 'rgba(255,255,255,0.03)',
           },
         }}
       >
-        <Typography variant="h3" sx={{ color: 'white', mb: 1 }}>
-          Hello, {currentUser?.name?.split(' ')[0]} 👋
+        <Typography variant="h3" sx={{ color: 'white', mb: 1, maxWidth: 560 }}>
+          Welcome back, {currentUser?.name?.split(' ')[0]}
         </Typography>
-        <Typography sx={{ opacity: 0.85, mb: 3, maxWidth: 480 }}>
-          You're part of something bigger. Connect with people in your area, share what you no
-          longer need, and make a real difference together.
+        <Typography sx={{ opacity: 0.92, mb: 3, maxWidth: 540, fontSize: '1.05rem', lineHeight: 1.7 }}>
+          Clutter isn't a personal problem — it's a community one.
+          Every item you share here goes to a real neighbour, not an anonymous warehouse.
+          That's what makes this different.
         </Typography>
         <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
           <Button
             component={RouterLink}
-            to="/communities"
+            to="/give-receive"
             variant="contained"
-            sx={{ bgcolor: 'white', color: 'primary.main', '&:hover': { bgcolor: 'grey.100' } }}
+            sx={{ bgcolor: 'white', color: 'primary.dark', fontWeight: 700, '&:hover': { bgcolor: 'grey.100' } }}
           >
-            Find your community
+            Share an item
           </Button>
           <Button
             component={RouterLink}
-            to="/exchange"
+            to="/communities"
             variant="outlined"
             sx={{ borderColor: 'rgba(255,255,255,0.5)', color: 'white', '&:hover': { borderColor: 'white' } }}
           >
-            Post an item
+            Find your community
           </Button>
         </Box>
       </Box>
 
-      {/* Personal stats */}
+      {/* Mission statement */}
+      <Box
+        sx={{
+          p: 3,
+          borderRadius: 3,
+          mb: 4,
+          bgcolor: 'rgba(45,106,79,0.04)',
+          border: '1px solid rgba(45,106,79,0.12)',
+          display: 'flex',
+          gap: 2,
+          alignItems: 'flex-start',
+        }}
+      >
+        <FormatQuoteIcon sx={{ color: 'primary.main', fontSize: 32, flexShrink: 0, mt: 0.5 }} />
+        <Box>
+          <Typography variant="body1" sx={{ fontStyle: 'italic', lineHeight: 1.8, color: 'text.primary', mb: 1 }}>
+            "We don't just move items — we build connections. When you give a coat to a neighbour
+            instead of a bin, when you fix a toaster with a stranger who becomes a friend,
+            when you swap stories alongside clothes — that's community infrastructure."
+          </Typography>
+          <Typography variant="caption" color="text.secondary">
+            The Unclutter Manifesto — Inner North Melbourne
+          </Typography>
+        </Box>
+      </Box>
+
+      {/* Neighbourhood impact — community metrics */}
+      {impact && (
+        <>
+          <Typography variant="h5" sx={{ mb: 2 }}>
+            Our neighbourhood, together
+          </Typography>
+          <Grid container spacing={2} sx={{ mb: 4 }}>
+            <Grid item xs={6} sm={3}>
+              <Card sx={{ textAlign: 'center', bgcolor: 'rgba(45,106,79,0.04)', border: '1px solid rgba(45,106,79,0.12)' }}>
+                <CardContent sx={{ py: 3 }}>
+                  <Typography variant="h3" color="primary.main" fontWeight={700}>
+                    {impact.totalItemsCirculated}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    items circulated
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+            <Grid item xs={6} sm={3}>
+              <Card sx={{ textAlign: 'center', bgcolor: 'rgba(45,106,79,0.04)', border: '1px solid rgba(45,106,79,0.12)' }}>
+                <CardContent sx={{ py: 3 }}>
+                  <Typography variant="h3" color="primary.main" fontWeight={700}>
+                    {impact.totalMembers.toLocaleString()}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    neighbours connected
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+            <Grid item xs={6} sm={3}>
+              <Card sx={{ textAlign: 'center', bgcolor: 'rgba(82,183,136,0.06)', border: '1px solid rgba(82,183,136,0.15)' }}>
+                <CardContent sx={{ py: 3 }}>
+                  <Typography variant="h3" sx={{ color: '#52B788' }} fontWeight={700}>
+                    {impact.totalCo2Saved.toFixed(0)}
+                    <Typography component="span" variant="body2" sx={{ color: '#52B788' }}> kg</Typography>
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    CO2 saved together
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+            <Grid item xs={6} sm={3}>
+              <Card sx={{ textAlign: 'center', bgcolor: 'rgba(212,137,106,0.06)', border: '1px solid rgba(212,137,106,0.15)' }}>
+                <CardContent sx={{ py: 3 }}>
+                  <Typography variant="h3" sx={{ color: '#D4896A' }} fontWeight={700}>
+                    {impact.activeHubs}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    active hubs nearby
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+          </Grid>
+        </>
+      )}
+
+      {/* Your personal impact */}
       <Typography variant="h5" sx={{ mb: 2 }}>
         Your impact
       </Typography>
       <Grid container spacing={2} sx={{ mb: 4 }}>
         <Grid item xs={12} sm={4}>
           <StatCard
-            icon={<SwapHorizIcon />}
-            label="Items given away"
+            icon={<VolunteerActivismIcon />}
+            label="Items given"
             value={currentUser?.stats.itemsGiven ?? 0}
           />
         </Grid>
         <Grid item xs={12} sm={4}>
           <StatCard
-            icon={<VolunteerActivismIcon />}
+            icon={<SwapHorizIcon />}
             label="Items received"
             value={currentUser?.stats.itemsReceived ?? 0}
             color="#D4896A"
@@ -99,7 +207,7 @@ function HomePage() {
         <Grid item xs={12} sm={4}>
           <StatCard
             icon={<Co2Icon />}
-            label="kg CO₂ saved"
+            label="kg CO2 saved"
             value={currentUser?.stats.co2Saved ?? 0}
             color="#52B788"
           />
@@ -107,54 +215,69 @@ function HomePage() {
       </Grid>
 
       <Grid container spacing={3}>
-        {/* Active challenges */}
-        <Grid item xs={12} md={6}>
+        {/* Community stories — the heart */}
+        <Grid item xs={12} md={7}>
           <Card sx={{ height: '100%' }}>
             <CardContent sx={{ p: 3 }}>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                <Typography variant="h6">Active challenges</Typography>
-                <Button component={RouterLink} to="/challenges" size="small">
-                  See all
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.5 }}>
+                <Typography variant="h6">Neighbour stories</Typography>
+                <Button component={RouterLink} to="/communities" size="small">
+                  All communities
                 </Button>
               </Box>
-              {activeChallenges.length === 0 ? (
-                <Typography color="text.secondary">No active challenges right now.</Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                Real people sharing real things — this is what community looks like.
+              </Typography>
+              {recentPosts.length === 0 ? (
+                <Typography color="text.secondary">No recent activity.</Typography>
               ) : (
-                activeChallenges.map((challenge) => (
-                  <Box
-                    key={challenge.id}
-                    sx={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 2,
-                      p: 1.5,
-                      borderRadius: 2,
-                      mb: 1,
-                      '&:hover': { bgcolor: 'rgba(45,106,79,0.04)' },
-                    }}
-                  >
-                    <Avatar sx={{ bgcolor: 'rgba(45,106,79,0.1)', fontSize: '1.4rem' }}>
-                      {challenge.badge}
-                    </Avatar>
-                    <Box sx={{ flexGrow: 1, minWidth: 0 }}>
-                      <Typography variant="body2" fontWeight={600} noWrap>
-                        {challenge.title}
+                recentPosts.map((post, index) => (
+                  <Box key={post.id}>
+                    <Box
+                      sx={{
+                        py: 2,
+                        '&:hover': { bgcolor: 'rgba(45,106,79,0.02)' },
+                        borderRadius: 2,
+                        px: 1,
+                      }}
+                    >
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                        <Avatar
+                          sx={{
+                            width: 32,
+                            height: 32,
+                            fontSize: '0.75rem',
+                            bgcolor: 'primary.main',
+                          }}
+                        >
+                          {post.authorName.charAt(0)}
+                        </Avatar>
+                        <Box>
+                          <Typography variant="body2" fontWeight={600}>
+                            {post.authorName}
+                          </Typography>
+                          <Chip
+                            label={post.communityName}
+                            size="small"
+                            sx={{ fontSize: '0.6rem', height: 18, bgcolor: 'rgba(45,106,79,0.08)', color: 'primary.main' }}
+                          />
+                        </Box>
+                      </Box>
+                      <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        sx={{ lineHeight: 1.7, mb: 0.8 }}
+                      >
+                        {post.content}
                       </Typography>
-                      <Typography variant="caption" color="text.secondary">
-                        {challenge.participants.toLocaleString()} participants
-                      </Typography>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                        <FavoriteIcon sx={{ fontSize: 13, color: '#C44B4B' }} />
+                        <Typography variant="caption" color="text.secondary">
+                          {post.likes}
+                        </Typography>
+                      </Box>
                     </Box>
-                    <Chip
-                      label={challenge.difficulty}
-                      size="small"
-                      color={
-                        challenge.difficulty === 'easy'
-                          ? 'success'
-                          : challenge.difficulty === 'medium'
-                          ? 'warning'
-                          : 'error'
-                      }
-                    />
+                    {index < recentPosts.length - 1 && <Divider />}
                   </Box>
                 ))
               )}
@@ -162,23 +285,29 @@ function HomePage() {
           </Card>
         </Grid>
 
-        {/* Community activity feed */}
-        <Grid item xs={12} md={6}>
+        {/* Upcoming events */}
+        <Grid item xs={12} md={5}>
           <Card sx={{ height: '100%' }}>
             <CardContent sx={{ p: 3 }}>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                <Typography variant="h6">Community activity</Typography>
-                <Button component={RouterLink} to="/communities" size="small">
-                  All communities
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.5 }}>
+                <Typography variant="h6">Upcoming events</Typography>
+                <Button component={RouterLink} to="/events" size="small">
+                  See all
                 </Button>
               </Box>
-              {recentPosts.length === 0 ? (
-                <Typography color="text.secondary">No recent activity.</Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                Meet your neighbours in person.
+              </Typography>
+              {upcomingEvents.length === 0 ? (
+                <Typography color="text.secondary">No upcoming events.</Typography>
               ) : (
-                recentPosts.map((post) => (
+                upcomingEvents.map((event) => (
                   <Box
-                    key={post.id}
+                    key={event.id}
                     sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 2,
                       p: 1.5,
                       borderRadius: 2,
                       mb: 1,
@@ -187,46 +316,42 @@ function HomePage() {
                       '&:hover': { bgcolor: 'rgba(45,106,79,0.04)' },
                     }}
                   >
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
-                      <Avatar
-                        sx={{
-                          width: 28,
-                          height: 28,
-                          fontSize: '0.7rem',
-                          bgcolor: 'primary.main',
-                        }}
-                      >
-                        {post.authorName.charAt(0)}
-                      </Avatar>
-                      <Typography variant="caption" fontWeight={600}>
-                        {post.authorName}
-                      </Typography>
-                      <Chip
-                        label={post.communityName}
-                        size="small"
-                        sx={{ fontSize: '0.6rem', height: 18, bgcolor: 'rgba(45,106,79,0.08)', color: 'primary.main' }}
-                      />
-                    </Box>
-                    <Typography
-                      variant="body2"
-                      color="text.secondary"
+                    <Box
                       sx={{
-                        display: '-webkit-box',
-                        WebkitLineClamp: 2,
-                        WebkitBoxOrient: 'vertical',
-                        overflow: 'hidden',
-                        lineHeight: 1.5,
-                        mb: 0.5,
+                        width: 48,
+                        height: 48,
+                        borderRadius: 2,
+                        bgcolor: 'rgba(45,106,79,0.08)',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexShrink: 0,
                       }}
                     >
-                      {post.content}
-                    </Typography>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                      <FavoriteIcon sx={{ fontSize: 12, color: 'text.disabled' }} />
-                      <Typography variant="caption" color="text.disabled">
-                        {post.likes}
+                      <Typography variant="caption" color="primary.main" fontWeight={700} sx={{ lineHeight: 1 }}>
+                        {new Date(event.date + 'T00:00:00').toLocaleDateString('en-AU', { day: 'numeric' })}
+                      </Typography>
+                      <Typography variant="caption" color="primary.main" sx={{ fontSize: '0.6rem', lineHeight: 1 }}>
+                        {new Date(event.date + 'T00:00:00').toLocaleDateString('en-AU', { month: 'short' })}
                       </Typography>
                     </Box>
+                    <Box sx={{ flexGrow: 1, minWidth: 0 }}>
+                      <Typography variant="body2" fontWeight={600} noWrap>
+                        {event.title}
+                      </Typography>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                        <LocationOnIcon sx={{ fontSize: 11, color: 'text.secondary' }} />
+                        <Typography variant="caption" color="text.secondary" noWrap>
+                          {event.location}
+                        </Typography>
+                      </Box>
+                    </Box>
+                    <Chip
+                      label={`${event.attendees} going`}
+                      size="small"
+                      sx={{ fontSize: '0.6rem', height: 20, bgcolor: 'rgba(45,106,79,0.08)', color: 'primary.main', flexShrink: 0 }}
+                    />
                   </Box>
                 ))
               )}
@@ -234,6 +359,34 @@ function HomePage() {
           </Card>
         </Grid>
       </Grid>
+
+      {/* Bottom CTA — community call */}
+      <Box
+        sx={{
+          mt: 4,
+          p: { xs: 3, md: 4 },
+          borderRadius: 4,
+          textAlign: 'center',
+          background: 'linear-gradient(135deg, rgba(45,106,79,0.06) 0%, rgba(82,183,136,0.08) 100%)',
+          border: '1px solid rgba(45,106,79,0.12)',
+        }}
+      >
+        <Typography variant="h5" sx={{ mb: 1 }}>
+          The best way to declutter is together
+        </Typography>
+        <Typography variant="body1" color="text.secondary" sx={{ mb: 3, maxWidth: 500, mx: 'auto' }}>
+          Sharing isn't just about moving stuff — it's about knowing your neighbours,
+          building trust, and creating a place where everyone has enough.
+        </Typography>
+        <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', flexWrap: 'wrap' }}>
+          <Button component={RouterLink} to="/give-receive" variant="contained">
+            Give or receive an item
+          </Button>
+          <Button component={RouterLink} to="/hubs" variant="outlined">
+            Find a hub near you
+          </Button>
+        </Box>
+      </Box>
     </Box>
   );
 }

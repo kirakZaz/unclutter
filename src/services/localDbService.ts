@@ -7,9 +7,9 @@ import type {
   ExchangeItem,
   Community,
   CommunityPost,
-  Challenge,
-  Donation,
-  SupportPost,
+  CommunityEvent,
+  HubLocation,
+  CommunityImpact,
   LoginCredentials,
   RegisterCredentials,
 } from '@/types';
@@ -103,7 +103,7 @@ export function restoreSession(): { user: PublicUser; token: string } | null {
   return { user: publicUser, token: session.token };
 }
 
-// ─── Exchange Items ───────────────────────────────────────────────────────────
+// ─── Give & Receive (Exchange Items) ─────────────────────────────────────────
 
 export function getExchangeItems(): ExchangeItem[] {
   return loadDatabase().exchangeItems;
@@ -120,6 +120,16 @@ export function addExchangeItem(item: Omit<ExchangeItem, 'id' | 'createdAt' | 'l
   db.exchangeItems.unshift(newItem);
   saveDatabase(db);
   return Promise.resolve(newItem);
+}
+
+export function likeExchangeItem(itemId: string): Promise<void> {
+  const db = loadDatabase();
+  const item = db.exchangeItems.find((i) => i.id === itemId);
+  if (item) {
+    item.likes += 1;
+    saveDatabase(db);
+  }
+  return Promise.resolve();
 }
 
 // ─── Communities ──────────────────────────────────────────────────────────────
@@ -170,66 +180,43 @@ export function likeCommunityPost(postId: string): Promise<void> {
   return Promise.resolve();
 }
 
-// ─── Challenges ───────────────────────────────────────────────────────────────
+// ─── Events ──────────────────────────────────────────────────────────────────
 
-export function getChallenges(): Challenge[] {
-  return loadDatabase().challenges;
+export function getEvents(): CommunityEvent[] {
+  return loadDatabase().events ?? [];
 }
 
-export function joinChallenge(challengeId: string): Promise<void> {
+export function joinEvent(eventId: string): Promise<void> {
   const db = loadDatabase();
-  const challenge = db.challenges.find((c) => c.id === challengeId);
-  if (challenge) {
-    challenge.participants += 1;
+  const event = (db.events ?? []).find((e) => e.id === eventId);
+  if (event && event.attendees < event.maxCapacity) {
+    event.attendees += 1;
     saveDatabase(db);
   }
   return Promise.resolve();
 }
 
-// ─── Donations ────────────────────────────────────────────────────────────────
+// ─── Hub Locations ───────────────────────────────────────────────────────────
 
-export function getDonations(): Donation[] {
-  return loadDatabase().donations;
+export function getHubLocations(): HubLocation[] {
+  return (loadDatabase().hubLocations ?? []).filter((h) => h.isActive);
 }
 
-export function addDonation(donation: Omit<Donation, 'id' | 'createdAt'>): Promise<Donation> {
+// ─── Community Impact ────────────────────────────────────────────────────────
+
+export function getCommunityImpact(): CommunityImpact {
   const db = loadDatabase();
-  const newDonation: Donation = {
-    ...donation,
-    id: uuidv4(),
-    createdAt: new Date().toISOString(),
+  const totalItemsCirculated = db.exchangeItems.length * 2;
+  const totalMembers = db.communities.reduce((sum, c) => sum + c.members, 0);
+  const totalCo2Saved = db.users.reduce((sum, u) => sum + u.stats.co2Saved, 0);
+  const totalEvents = (db.events ?? []).length;
+  const activeHubs = (db.hubLocations ?? []).filter((h) => h.isActive).length;
+
+  return {
+    totalItemsCirculated,
+    totalMembers,
+    totalCo2Saved,
+    totalEvents,
+    activeHubs,
   };
-  db.donations.unshift(newDonation);
-  saveDatabase(db);
-  return Promise.resolve(newDonation);
-}
-
-// ─── Support Posts ────────────────────────────────────────────────────────────
-
-export function getSupportPosts(): SupportPost[] {
-  return loadDatabase().supportPosts;
-}
-
-export function addSupportPost(post: Omit<SupportPost, 'id' | 'createdAt' | 'replies' | 'likes'>): Promise<SupportPost> {
-  const db = loadDatabase();
-  const newPost: SupportPost = {
-    ...post,
-    id: uuidv4(),
-    createdAt: new Date().toISOString(),
-    replies: 0,
-    likes: 0,
-  };
-  db.supportPosts.unshift(newPost);
-  saveDatabase(db);
-  return Promise.resolve(newPost);
-}
-
-export function likeSupportPost(postId: string): Promise<void> {
-  const db = loadDatabase();
-  const post = db.supportPosts.find((p) => p.id === postId);
-  if (post) {
-    post.likes += 1;
-    saveDatabase(db);
-  }
-  return Promise.resolve();
 }

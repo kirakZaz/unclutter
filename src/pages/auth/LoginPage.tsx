@@ -89,8 +89,8 @@ function LoginPage() {
           <Typography variant="h3" gutterBottom>
             Welcome back
           </Typography>
-          <Typography color="text.secondary">
-            Sign in to keep your circular journey going
+          <Typography color="text.secondary" sx={{ maxWidth: 340, mx: 'auto' }}>
+            Your neighbours are sharing, swapping, and connecting. Pick up where you left off.
           </Typography>
         </Box>
 

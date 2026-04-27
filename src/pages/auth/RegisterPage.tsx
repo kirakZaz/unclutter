@@ -106,10 +106,10 @@ function RegisterPage() {
             <RecyclingIcon sx={{ color: 'white', fontSize: 36 }} />
           </Box>
           <Typography variant="h3" gutterBottom>
-            Join Unclutter
+            Join your neighbourhood
           </Typography>
-          <Typography color="text.secondary">
-            Start your decluttering journey today
+          <Typography color="text.secondary" sx={{ maxWidth: 380, mx: 'auto' }}>
+            Connect with neighbours who share, swap, and look out for each other. Your community is already here.
           </Typography>
         </Box>
 
@@ -141,7 +141,7 @@ function RegisterPage() {
                 </Grid>
                 <Grid item xs={12} sm={5}>
                   <TextField
-                    label="City / Location"
+                    label="Your suburb"
                     name="location"
                     value={formValues.location}
                     onChange={handleInputChange}

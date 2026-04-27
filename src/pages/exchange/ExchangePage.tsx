@@ -21,14 +21,19 @@ import {
   InputAdornment,
   Skeleton,
   Alert,
+  IconButton,
+  Avatar,
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import AddIcon from '@mui/icons-material/Add';
 import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
+import VolunteerActivismIcon from '@mui/icons-material/VolunteerActivism';
+import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '@/hooks/useAuth';
-import { getExchangeItems, addExchangeItem } from '@/services/localDbService';
+import { getExchangeItems, addExchangeItem, likeExchangeItem } from '@/services/localDbService';
 import SectionHeader from '@/components/common/SectionHeader';
 import type { ExchangeType, ItemCategory } from '@/types';
 
@@ -43,10 +48,9 @@ const CATEGORY_OPTIONS: { value: ItemCategory; label: string }[] = [
   { value: 'other', label: 'Other' },
 ];
 
-const TYPE_COLOR: Record<ExchangeType, 'success' | 'primary' | 'secondary'> = {
-  free: 'success',
-  swap: 'primary',
-  sell: 'secondary',
+const TYPE_ICON: Record<ExchangeType, React.ReactElement> = {
+  free: <VolunteerActivismIcon sx={{ fontSize: 14 }} />,
+  swap: <SwapHorizIcon sx={{ fontSize: 14 }} />,
 };
 
 function ItemCardSkeleton() {
@@ -73,6 +77,7 @@ function ExchangePage() {
   const [selectedCategory, setSelectedCategory] = React.useState<string>('all');
   const [selectedType, setSelectedType] = React.useState<string>('all');
   const [isDialogOpen, setIsDialogOpen] = React.useState(false);
+  const [likedIds, setLikedIds] = React.useState<Set<string>>(new Set());
 
   const [newItemForm, setNewItemForm] = React.useState({
     title: '',
@@ -99,6 +104,14 @@ function ExchangePage() {
         type: 'free',
         location: currentUser?.location ?? '',
       });
+    },
+  });
+
+  const likeMutation = useMutation({
+    mutationFn: likeExchangeItem,
+    onSuccess: (_, itemId) => {
+      setLikedIds((prev) => new Set(prev).add(itemId));
+      queryClient.invalidateQueries({ queryKey: ['exchangeItems'] });
     },
   });
 
@@ -135,15 +148,15 @@ function ExchangePage() {
   return (
     <Box>
       <SectionHeader
-        title="Exchange"
-        subtitle="Swap, give, or find items from your community"
+        title="Give & Receive"
+        subtitle="Share what you no longer need, find what you do — no cost, no haggling, just neighbours helping neighbours"
         action={
           <Button
             variant="contained"
             startIcon={<AddIcon />}
             onClick={() => setIsDialogOpen(true)}
           >
-            Post item
+            Share an item
           </Button>
         }
       />
@@ -151,7 +164,7 @@ function ExchangePage() {
       {/* Filters */}
       <Box sx={{ display: 'flex', gap: 2, mb: 3, flexWrap: 'wrap', alignItems: 'center' }}>
         <TextField
-          placeholder="Search items…"
+          placeholder="Search items..."
           value={searchQuery}
           onChange={(event) => setSearchQuery(event.target.value)}
           size="small"
@@ -190,7 +203,6 @@ function ExchangePage() {
           <ToggleButton value="all">All</ToggleButton>
           <ToggleButton value="free">Free</ToggleButton>
           <ToggleButton value="swap">Swap</ToggleButton>
-          <ToggleButton value="sell">Sell</ToggleButton>
         </ToggleButtonGroup>
       </Box>
 
@@ -209,69 +221,89 @@ function ExchangePage() {
         </Box>
       ) : (
         <Grid container spacing={2}>
-          {filteredItems.map((item) => (
-            <Grid item xs={12} sm={6} md={4} key={item.id}>
-              <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-                <CardContent sx={{ flexGrow: 1, p: 2.5 }}>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                    <Chip
-                      label={item.type}
-                      size="small"
-                      color={TYPE_COLOR[item.type]}
-                      variant="outlined"
-                    />
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                      <FavoriteIcon sx={{ fontSize: 14, color: 'text.secondary' }} />
-                      <Typography variant="caption" color="text.secondary">
-                        {item.likes}
-                      </Typography>
+          {filteredItems.map((item) => {
+            const isLiked = likedIds.has(item.id);
+            return (
+              <Grid item xs={12} sm={6} md={4} key={item.id}>
+                <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                  <CardContent sx={{ flexGrow: 1, p: 2.5 }}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                      <Chip
+                        icon={TYPE_ICON[item.type]}
+                        label={item.type === 'free' ? 'Free' : 'Swap'}
+                        size="small"
+                        color={item.type === 'free' ? 'success' : 'primary'}
+                        variant="outlined"
+                      />
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                        <IconButton
+                          size="small"
+                          onClick={() => !isLiked && likeMutation.mutate(item.id)}
+                          disabled={isLiked}
+                          sx={{ p: 0.3 }}
+                        >
+                          {isLiked ? (
+                            <FavoriteIcon sx={{ fontSize: 16, color: 'error.main' }} />
+                          ) : (
+                            <FavoriteBorderIcon sx={{ fontSize: 16, color: 'text.secondary' }} />
+                          )}
+                        </IconButton>
+                        <Typography variant="caption" color="text.secondary">
+                          {item.likes + (isLiked ? 1 : 0)}
+                        </Typography>
+                      </Box>
                     </Box>
-                  </Box>
 
-                  <Typography variant="h6" sx={{ mb: 0.5, fontSize: '1rem' }}>
-                    {item.title}
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    sx={{
-                      display: '-webkit-box',
-                      WebkitLineClamp: 2,
-                      WebkitBoxOrient: 'vertical',
-                      overflow: 'hidden',
-                      mb: 2,
-                    }}
-                  >
-                    {item.description}
-                  </Typography>
-
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                      <LocationOnIcon sx={{ fontSize: 14, color: 'text.secondary' }} />
-                      <Typography variant="caption" color="text.secondary">
-                        {item.location}
-                      </Typography>
-                    </Box>
-                    <Typography variant="caption" color="text.secondary">
-                      by {item.authorName}
+                    <Typography variant="h6" sx={{ mb: 0.5, fontSize: '1rem' }}>
+                      {item.title}
                     </Typography>
-                  </Box>
-                </CardContent>
-              </Card>
-            </Grid>
-          ))}
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      sx={{
+                        display: '-webkit-box',
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: 'vertical',
+                        overflow: 'hidden',
+                        mb: 2,
+                      }}
+                    >
+                      {item.description}
+                    </Typography>
+
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                        <LocationOnIcon sx={{ fontSize: 14, color: 'text.secondary' }} />
+                        <Typography variant="caption" color="text.secondary">
+                          {item.location}
+                        </Typography>
+                      </Box>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                        <Avatar sx={{ width: 20, height: 20, fontSize: '0.6rem', bgcolor: 'primary.main' }}>
+                          {item.authorName.charAt(0)}
+                        </Avatar>
+                        <Typography variant="caption" color="text.secondary">
+                          {item.authorName}
+                        </Typography>
+                      </Box>
+                    </Box>
+                  </CardContent>
+                </Card>
+              </Grid>
+            );
+          })}
         </Grid>
       )}
 
       {/* Add item dialog */}
       <Dialog open={isDialogOpen} onClose={() => setIsDialogOpen(false)} maxWidth="sm" fullWidth>
-        <DialogTitle>Post an item</DialogTitle>
+        <DialogTitle>Share an item with your community</DialogTitle>
         <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2.5, pt: '16px !important' }}>
           {addItemMutation.isError && (
             <Alert severity="error">Failed to post item. Please try again.</Alert>
           )}
           <TextField
-            label="Item title"
+            label="What are you sharing?"
             name="title"
             value={newItemForm.title}
             onChange={handleFormChange}
@@ -279,7 +311,7 @@ function ExchangePage() {
             required
           />
           <TextField
-            label="Description"
+            label="Tell your neighbours about it"
             name="description"
             value={newItemForm.description}
             onChange={handleFormChange}
@@ -312,18 +344,18 @@ function ExchangePage() {
                 label="Type"
                 onChange={(event) => handleFormChange({ target: { name: 'type', value: event.target.value } })}
               >
-                <MenuItem value="free">Free</MenuItem>
-                <MenuItem value="swap">Swap</MenuItem>
-                <MenuItem value="sell">Sell</MenuItem>
+                <MenuItem value="free">Free — give it away</MenuItem>
+                <MenuItem value="swap">Swap — exchange for something</MenuItem>
               </Select>
             </FormControl>
           </Box>
           <TextField
-            label="Your location"
+            label="Your suburb"
             name="location"
             value={newItemForm.location}
             onChange={handleFormChange}
             fullWidth
+            helperText="e.g. Fitzroy, Brunswick, Collingwood"
           />
         </DialogContent>
         <DialogActions sx={{ px: 3, pb: 3 }}>
@@ -335,7 +367,7 @@ function ExchangePage() {
             onClick={handleSubmitNewItem}
             disabled={!newItemForm.title || !newItemForm.description || addItemMutation.isPending}
           >
-            {addItemMutation.isPending ? 'Posting…' : 'Post item'}
+            {addItemMutation.isPending ? 'Sharing...' : 'Share with neighbours'}
           </Button>
         </DialogActions>
       </Dialog>

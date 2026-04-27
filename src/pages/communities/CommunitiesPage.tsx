@@ -121,11 +121,14 @@ function CommunitiesPage() {
         }}
       >
         <Typography variant="h3" sx={{ color: 'white', mb: 1 }}>
-          Find Your People
+          Belonging starts here
         </Typography>
-        <Typography sx={{ opacity: 0.9, mb: 3, maxWidth: 520 }}>
-          Join communities of people who share your values — whether that's zero waste, repair,
-          slow fashion, or just living with less.
+        <Typography sx={{ opacity: 0.92, mb: 1, maxWidth: 540, fontSize: '1.05rem', lineHeight: 1.7 }}>
+          Clutter often grows where connection is missing. These communities are built
+          by neighbours — people who share, repair, and look out for each other.
+        </Typography>
+        <Typography sx={{ opacity: 0.75, mb: 3, maxWidth: 540, fontStyle: 'italic' }}>
+          You're not just joining a group — you're joining a neighbourhood.
         </Typography>
         <Box sx={{ display: 'flex', gap: 3, flexWrap: 'wrap' }}>
           <Box>
@@ -424,8 +427,11 @@ function CommunitiesPage() {
         <Grid item xs={12} md={4}>
           <Card sx={{ position: 'sticky', top: 16 }}>
             <CardContent sx={{ p: 2.5 }}>
-              <Typography variant="h6" sx={{ mb: 2 }}>
-                Community feed
+              <Typography variant="h6" sx={{ mb: 0.5 }}>
+                Neighbour stories
+              </Typography>
+              <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 2 }}>
+                Real moments from your community
               </Typography>
 
               {postsLoading ? (
